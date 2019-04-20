@@ -11,7 +11,11 @@ def runCommand(cmd):
     """Executes the desired command, checking for builtins"""
     if(cmd[0] == 'exit'):
         sys.exit(0)
-    os.execvp(cmd[0], cmd)
+    child = os.fork()
+    if child == 0:
+        os.execvp(cmd[0], cmd)
+    else:
+        os.wait()
 
 
 if __name__ == '__main__':
