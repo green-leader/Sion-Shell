@@ -19,7 +19,9 @@ if __name__ == '__main__':
     while True:
         try:
             print(promptBegin, end="> ")
-            runCommand(parseCommand(input()))
+            command = parseCommand(input())
+            if command[0] != '':
+                runCommand(command)
         except EOFError as err:
             print()
             exit(0)
