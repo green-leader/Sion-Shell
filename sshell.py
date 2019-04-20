@@ -35,3 +35,5 @@ if __name__ == '__main__':
         except EOFError as err:
             print()
             exit(0)
+        except KeyboardInterrupt as err:
+            print()
