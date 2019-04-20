@@ -8,7 +8,9 @@ def parseCommand(cmd):
 
 
 def runCommand(cmd):
-    """Executes the desired command"""
+    """Executes the desired command, checking for builtins"""
+    if(cmd[0] == 'exit'):
+        sys.exit(0)
     os.execvp(cmd[0], cmd)
 
 
