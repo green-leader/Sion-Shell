@@ -11,10 +11,10 @@ class TestCommandMethods(unittest.TestCase):
 
     def test_builtin_exit(self):
         with self.assertRaises(SystemExit) as exitCode:
-            sshell.runCommand(['exit'])
+            sshell.builtin_exit(['exit'])
         self.assertEqual(exitCode.exception.code, 0)
         with self.assertRaises(SystemExit) as exitCode:
-            sshell.runCommand(['exit', '-1'])
+            sshell.builtin_exit(['exit', '-1'])
         self.assertEqual(exitCode.exception.code, -1)
 
 
