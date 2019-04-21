@@ -9,14 +9,9 @@ def raise_(*args):
     raise RuntimeWarning
 
 
-class TestCommandMethods(unittest.TestCase):
+class TestBuildinMethods(unittest.TestCase):
 
-    def test_parseCommand(self):
-        self.assertEqual(sshell.parseCommand(''), [''])
-        cmdIn = 'ls -l /tmp'
-        self.assertEqual(sshell.parseCommand(cmdIn), ['ls', '-l', '/tmp'])
-
-    def test_builtin_exit(self):
+    def test_buildin_exit(self):
         with self.assertRaises(SystemExit) as exitCode:
             sshell.builtin_exit(['exit'])
         self.assertEqual(exitCode.exception.code, 0)
@@ -24,12 +19,34 @@ class TestCommandMethods(unittest.TestCase):
             sshell.builtin_exit(['exit', '-1'])
         self.assertEqual(exitCode.exception.code, -1)
 
+    def test_builtin_cd(self):
+        sshell.builtin_cd([''])
+        self.assertEqual(os.getcwd(), '/')
+        sshell.builtin_cd(['cd', '/tmp'])
+        self.assertEqual(os.getcwd(), '/tmp')
+        sshell.builtin_cd(['cd', '..'])
+        self.assertEqual(os.getcwd(), '/')
+
+
+class TestCommandMethods(unittest.TestCase):
+
+    def test_parseCommand(self):
+        self.assertEqual(sshell.parseCommand(''), [''])
+        cmdIn = 'ls -l /tmp'
+        self.assertEqual(sshell.parseCommand(cmdIn), ['ls', '-l', '/tmp'])
+
+    def test_runCommand_exit(self):
+        with self.assertRaises(SystemExit):
+            sshell.runCommand(['exit'])
+
+    def test_runCommand_cd(self):
+        sshell.runCommand(['cd'])
+        self.assertEqual(os.getcwd(), '/')
+
     @patch.object(os, 'fork')
     @patch.object(os, 'execvp', raise_)
     @patch.object(os, 'wait', raise_)
-    def test_runCommand(self, mock_methods):
-        with self.assertRaises(SystemExit):
-            sshell.runCommand(['exit'])
+    def test_runCommand_command(self, mock_methods):
         os.fork.return_value = 0  # Child Branch
         with self.assertRaises(RuntimeWarning):
             sshell.runCommand(['bash'])
