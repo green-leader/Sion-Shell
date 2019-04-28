@@ -16,11 +16,50 @@ def builtin_cd(cmd):
 
 
 def parseCommand(cmd):
+    """Parses given input. checks for pipes to approrpiately nest commands"""
+    if '|' in cmd:
+        return [c.strip().split(' ') for c in cmd.split('|')]
     return cmd.split(' ')
+
+
+def runCommand_io(cmdList):
+    """Executes multiple commands, using a pipe"""
+    if os.fork() == 0:
+        r, w = os.pipe()
+        if os.fork() == 0:
+            # child child commandb
+            os.dup2(r, sys.stdin.fileno())
+            os.close(r)
+            os.close(w)
+            os.execvp(cmdList[1][0], cmdList[1])
+        else:
+            # child parent commanda
+            os.close(r)
+            os.dup2(w, sys.stdout.fileno())
+            os.execvp(cmdList[0][0], cmdList[0])
+            os.close(w)
+    else:
+        os.wait()
+    # if os.fork() == 0:
+    #    # Child
+    #    os.dup2(r, sys.stdin.fileno())
+    #    os.close(r)
+    #    os.close(w)
+    #    os.execvp(cmdList[1][0], cmdList[1])
+    # else:
+    #    # Parent
+    #    os.close(r)
+    #    os.dup2(w, sys.stdout.fileno())
+    #    os.execvp(cmdList[0][0], cmdList[0])
+    #    os.close(w)
+    #    os.wait()
 
 
 def runCommand(cmd):
     """Executes the desired command, checking for builtins"""
+    if(type(cmd[0]) == list):
+        runCommand_io(cmd)
+        return
     if(cmd[0] == 'exit'):
         builtin_exit(cmd)
     if(cmd[0] == 'cd'):

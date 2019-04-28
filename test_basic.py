@@ -9,7 +9,7 @@ def raise_(*args):
     raise RuntimeWarning
 
 
-class TestBuildinMethods(unittest.TestCase):
+class TestBuiltinMethods(unittest.TestCase):
 
     def test_buildin_exit(self):
         with self.assertRaises(SystemExit) as exitCode:
@@ -34,6 +34,12 @@ class TestCommandMethods(unittest.TestCase):
         self.assertEqual(sshell.parseCommand(''), [''])
         cmdIn = 'ls -l /tmp'
         self.assertEqual(sshell.parseCommand(cmdIn), ['ls', '-l', '/tmp'])
+
+    def test_parseCommand_pipe(self):
+            self.assertEqual(
+                sshell.parseCommand('ls -d . | wc -l'),
+                [['ls', '-d', '.'], ['wc', '-l']]
+                )
 
     def test_runCommand_exit(self):
         with self.assertRaises(SystemExit):
