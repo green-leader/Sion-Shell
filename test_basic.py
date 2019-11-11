@@ -60,6 +60,17 @@ class TestCommandMethods(unittest.TestCase):
         with self.assertRaises(RuntimeWarning):
             sshell.runCommand(['bash'])
 
+    @patch.object(os, 'fork')
+    @patch.object(os, 'execvp', raise_)
+    @patch.object(os, 'wait', raise_)
+    def test_runCommand_badcommand(self, mock_methods):
+        os.fork.return_value = 0  # Child Branch
+        with self.assertRaises(RuntimeWarning):
+            sshell.runCommand(['foo'])
+        os.fork.return_value = 1  # parent Branch
+        with self.assertRaises(RuntimeWarning):
+            sshell.runCommand(['foo'])
+
 
 if __name__ == '__main__':
     unittest.main()

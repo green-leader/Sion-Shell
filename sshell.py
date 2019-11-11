@@ -52,11 +52,14 @@ def runCommand(cmd):
     if(cmd[0] == 'cd'):
         builtin_cd(cmd)
         return
-    child = os.fork()
-    if child == 0:
-        os.execvp(cmd[0], cmd)
-    else:
-        os.wait()
+    try:
+        child = os.fork()
+        if child == 0:
+            os.execvp(cmd[0], cmd)
+        else:
+            os.wait()
+    except FileNotFoundError as err:
+        print("\'%s\' command not found" % cmd[0], file=sys.stderr)
 
 
 if __name__ == '__main__':
@@ -72,3 +75,5 @@ if __name__ == '__main__':
             exit(0)
         except KeyboardInterrupt as err:
             print()
+        except FileNotFoundError as err:
+            print("Command not found", file=sys.stderr)
