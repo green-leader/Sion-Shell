@@ -31,20 +31,12 @@ def builtin_cd(cmd):
 
 
 def builtin_command(cmd):
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-    fpath, fname = os.path.split(cmd[0])
-    if fpath:
-        if is_exe(cmd[0]):
-            return cmd[0]
-    else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            exe_file = os.path.join(path, cmd[0])
-            if is_exe(exe_file):
-                return exe_file
-
-    return None
+    '''check if command is a valid executable'''
+    if len(cmd) == 1:
+        return
+    result = valid_exe(cmd[1:])
+    if result is not None:
+        print(result)
 
 
 def parseCommand(cmd):
