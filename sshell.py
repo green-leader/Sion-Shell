@@ -40,19 +40,6 @@ def runCommand_io(cmdList):
             os.close(w)
     else:
         os.wait()
-    # if os.fork() == 0:
-    #    # Child
-    #    os.dup2(r, sys.stdin.fileno())
-    #    os.close(r)
-    #    os.close(w)
-    #    os.execvp(cmdList[1][0], cmdList[1])
-    # else:
-    #    # Parent
-    #    os.close(r)
-    #    os.dup2(w, sys.stdout.fileno())
-    #    os.execvp(cmdList[0][0], cmdList[0])
-    #    os.close(w)
-    #    os.wait()
 
 
 def runCommand(cmd):
