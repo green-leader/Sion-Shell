@@ -71,6 +71,19 @@ class TestCommandMethods(unittest.TestCase):
         with self.assertRaises(RuntimeWarning):
             sshell.runCommand(['foo'])
 
+    def test_valid_exe(self):
+        from string import ascii_lowercase
+        validcmd = ['/usr/bin/env']
+        self.assertTrue(sshell.valid_exe(validcmd))
+
+        # invalid command with no path
+        invalidcmd = [ascii_lowercase]
+        self.assertFalse(sshell.valid_exe(invalidcmd))
+
+        # invalid command with path
+        invalidcmd = ['/bin/' + ascii_lowercase]
+        self.assertFalse(sshell.valid_exe(invalidcmd))
+
 
 if __name__ == '__main__':
     unittest.main()

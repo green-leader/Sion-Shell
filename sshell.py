@@ -3,6 +3,21 @@ import sys
 import os
 
 
+def valid_exe(cmd):
+    def exe_check(exePath):
+        return os.path.exists(exePath) and os.access(exePath, os.X_OK)
+
+    exePath, exeName = os.path.split(cmd[0])
+    if exePath:
+        if exe_check(cmd[0]):
+            return cmd[0]
+    else:
+        for path in os.environ['PATH'].split(os.pathsep):
+            exeFull = os.path.join(path, cmd[0])
+            if exe_check(exeFull):
+                return exe_check(cmd[0])
+
+
 def builtin_exit(cmd):
     if len(cmd) == 1:
         cmd.append('0')
@@ -13,6 +28,23 @@ def builtin_cd(cmd):
     if len(cmd) == 1:
         cmd.append('/')
     os.chdir(cmd[1])
+
+
+def builtin_command(cmd):
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(cmd[0])
+    if fpath:
+        if is_exe(cmd[0]):
+            return cmd[0]
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            exe_file = os.path.join(path, cmd[0])
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
 
 
 def parseCommand(cmd):
@@ -51,6 +83,9 @@ def runCommand(cmd):
         builtin_exit(cmd)
     if(cmd[0] == 'cd'):
         builtin_cd(cmd)
+        return
+    if(cmd[0] == 'command'):
+        builtin_command(cmd)
         return
     try:
         child = os.fork()
