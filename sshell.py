@@ -60,6 +60,7 @@ def runCommand(cmd):
             os.wait()
     except FileNotFoundError as err:
         print("\'%s\' command not found" % cmd[0], file=sys.stderr)
+        exit(1)
 
 
 if __name__ == '__main__':
@@ -75,5 +76,3 @@ if __name__ == '__main__':
             exit(0)
         except KeyboardInterrupt as err:
             print()
-        except FileNotFoundError as err:
-            print("Command not found", file=sys.stderr)
